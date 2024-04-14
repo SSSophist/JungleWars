@@ -1,2 +1,6 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+*.asset”
+git[[:space:]]add[[:space:]].gitattributes
+git[[:space:]]add[[:space:]].
+git[[:space:]]commit[[:space:]]-m[[:space:]]fix…” filter=lfs diff=lfs merge=lfs -text
