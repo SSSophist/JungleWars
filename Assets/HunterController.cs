@@ -26,7 +26,7 @@ public class HunterController : NetworkBehaviour
     public bool canControl = true;
     //仓库
     [SyncVar] public PInfo pInfo=new();
-    [SyncVar] public List<ItemInfo> items = new();//[SyncVar(hook = nameof(OnPlayerInfoChanged))] 
+    public SyncList<ItemInfo> items = new();//[SyncVar(hook = nameof(OnPlayerInfoChanged))] 
     
     //[SyncVar(hook = nameof(OnItemChanged))] public int pickedNum;
     //玩家动画机
@@ -79,9 +79,14 @@ public class HunterController : NetworkBehaviour
 
         if(isLocalPlayer)
         {
+            //设置
             ItemManager.st.pc = this;
             cameraTF = Camera.main.transform;
             Camera.main.GetComponent<CameraController>().SetTarget(transform);
+        }
+        else
+        {
+            enabled = false;
         }
     }
     // 这个方法在玩家生成时被调用
@@ -116,10 +121,9 @@ public class HunterController : NetworkBehaviour
     }
     private void Update()
     {
+        /*
         if (!isLocalPlayer)
-        {
-            return;
-        }
+            return;*/
         if (!canControl)
             return;
 

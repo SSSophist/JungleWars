@@ -20,11 +20,11 @@ public class RoomManager : MonoBehaviour
     public Button startGameButton;
     public Button readyButton;
     public TMP_Text readyText;
-    public TMP_Text tipText;
-    public static RoomManager st;
+    [FoldoutGroup("Set")][LabelText("提示文字")] public TMP_Text tipText;
+   public static RoomManager st;
 
-    public RoomPlayerItem roomPlayerItemPrefab;
-    public Transform itemUIContainer;
+    [FoldoutGroup("Set")][LabelText("房间预制体")] public RoomPlayerItem roomPlayerItemPrefab;
+    [FoldoutGroup("Set")][LabelText("房间父物体")] public Transform itemUIContainer;
     [Sirenix.OdinInspector.ShowInInspector][Header("房间Item")] List<RoomPlayerItem> items = new();
     private void Awake()
     {

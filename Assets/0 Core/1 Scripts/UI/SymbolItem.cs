@@ -10,6 +10,7 @@ public class SymbolItem : MonoBehaviour
 {
     public string symbol;
     public SymbolState state;
+    public int index = -1;
     [FoldoutGroup("Set")] public TMP_Text text;
     [FoldoutGroup("Set")] public RectTransform RT;
     [FoldoutGroup("¶¯»­")] public TweenSettings ts;

@@ -15,47 +15,33 @@ public class ItemSpawner : NetworkBehaviour
     public Vector2Int numRange = new(3,23); 
     [SyncVar] public float minInterval, maxInterval;
     [SyncVar] public int maxCount=50;
-    [SyncVar] public int curCount;
-    [SyncVar] public List<ItemInfoNW> hasSpawnItemInfos = new List<ItemInfoNW>();
-    [SyncVar] public List<GameObject> hasSpawnItems = new List<GameObject>();
+    //public SyncList<ItemInfoNW> hasSpawnItemInfos = new();
+    public SyncList<GameObject> hasSpawnItems = new();
+
     public GameObject itemPrefab;
     public Vector3 randomAreaSize; 
 
     public override void OnStartServer()
     {
-        Debug.Log("开始生成");
         StartCoroutine(StartSpawner());
     }
-    /*
-    public override void OnStartClient()
-    {
-        hasSpawnItems.RemoveAll(item => item == null);
-         foreach (GameObject item in hasSpawnItems)
-        {
-            NetworkServer.Spawn(item);
-        }
-    }*/
 
     IEnumerator StartSpawner()
     {
-        yield return new WaitForSeconds(Random.Range(minInterval, maxInterval));
+        yield return new WaitForSeconds(1f);
         // 先生成5个
-        while (curCount <= 5)
+        while (hasSpawnItems.Count <= 5)
         {
-            curCount++;
             Spawn();
             yield return new WaitForSeconds(0.2f);
         }
 
-        // 先生成5个
+        // 
         while (true)
         {
-            if(curCount<=maxCount)
+            if(hasSpawnItems.Count <= maxCount)
             {
-                //Debug.Log("生成");
-                curCount++;
                 Spawn();
-
             }
                 
             yield return new WaitForSeconds(Random.Range(minInterval, maxInterval));
@@ -73,10 +59,12 @@ public class ItemSpawner : NetworkBehaviour
         GameObject itemGO = Instantiate(itemPrefab, itemInfoNW.pos, Quaternion.identity);
         NetworkServer.Spawn(itemGO);
         //必须在Spaw后执行
+        // 初始化信息
         itemGO.GetComponent<Item>().RpcInit(itemInfoNW.itemInfo);
 
+        hasSpawnItems.RemoveAll(item => item == null);
         hasSpawnItems.Add(itemGO);
-        hasSpawnItemInfos.Add(itemInfoNW);
+        //hasSpawnItemInfos.Add(itemInfoNW);
     }
     public Vector3 GetRandomPos()
     {

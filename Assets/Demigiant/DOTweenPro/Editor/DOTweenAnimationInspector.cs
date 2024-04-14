@@ -74,7 +74,7 @@ namespace DG.DOTweenEditor
 #endif
 
         static readonly string[] _AnimationType = new[] {
-            "None",
+            "Collect",
             "Move", "LocalMove",
             "Rotate", "LocalRotate",
             "Scale",
