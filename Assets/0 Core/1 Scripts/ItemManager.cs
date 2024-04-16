@@ -56,24 +56,25 @@ public class ItemManager : MonoBehaviour
     //更新UI
     public void UpdateUI(SyncList<ItemInfo> itemInfos)
     {
+        // 更新UI显示
         for(int i=0;i< itemUIs.Count; i++)
         {
             Destroy(itemUIs[i].gameObject);
         }
-
         itemUIs.Clear();
-
         for (int i = 0; i < itemInfos.Count; i++)
         {
             ItemUI itemUI = Instantiate(itemUIPrefab, itemSlotRTs[i].transform).GetComponent<ItemUI>();
             itemUI.Init(itemInfos[i].num, i);
             itemUIs.Add(itemUI);
         }
+        
+        // 动画效果
         Sequence seq = Sequence.Create()
             .Chain(Tween.Scale(itemUIs[itemUIs.Count - 1].transform, Vector3.one*0.2f, resTS))
             .Chain(Tween.Scale(itemUIs[itemUIs.Count - 1].transform, Vector3.one, 0.9f, Ease.OutSine));
 
-        //如果数量大于4，则开始计算
+        // 如果数量大于4，则开始计算
         if (itemInfos.Count>=4)
         {
             StartCompute();
@@ -185,6 +186,7 @@ public class ItemManager : MonoBehaviour
     {
         pc.canControl = false;
         state = State.Compute;
+        //显示
         computePanel.SetActive(true);
         computePanelTween.Stop();
         computePanelTween = Tween.Scale(computePanel.transform, Vector3.one, computePanelTS);

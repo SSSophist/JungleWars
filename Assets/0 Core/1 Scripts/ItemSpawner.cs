@@ -16,7 +16,7 @@ public class ItemSpawner : NetworkBehaviour
     [SyncVar] public float minInterval, maxInterval;
     [SyncVar] public int maxCount=50;
     //public SyncList<ItemInfoNW> hasSpawnItemInfos = new();
-    public SyncList<GameObject> hasSpawnItems = new();
+    [Mirror.ReadOnly] public SyncList<GameObject> hasSpawnItems = new();
 
     public GameObject itemPrefab;
     public Vector3 randomAreaSize; 

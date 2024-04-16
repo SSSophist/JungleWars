@@ -389,7 +389,7 @@ public class NetworkRoomManager : NetworkManager
             Debug.LogError("NetworkRoomManager PlayScene is empty. Set the PlayScene in the inspector for the NetworkRoomManager");
             return;
         }
-
+        //服务器开始创建房间（应该在
         OnRoomStartServer();
     }
 

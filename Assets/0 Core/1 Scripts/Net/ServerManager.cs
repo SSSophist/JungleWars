@@ -9,12 +9,18 @@ public class ServerManager : MonoBehaviour
     [Header("NetworkManager")] public NetworkManager networkManager;
     private void Start()
     {
-        //开启单独服务器
         if (isServer)
         {
+            //以服务器的方式启动
             networkManager.StartServer();
+        }
+        else
+        {
+            //以客户端的方式启动
+            networkManager.StartClient();
         }
 
         DontDestroyOnLoad(gameObject);
+
     }
 }

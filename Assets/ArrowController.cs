@@ -25,9 +25,8 @@ public class ArrowController : NetworkBehaviour
     {
         NetworkServer.Destroy(gameObject);
     }
-    // ServerCallback because we don't want a warning
-    // if OnTriggerEnter is called on the client
-    [ServerCallback]//Callback [Command]
+
+    [ServerCallback]
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Item")&& isServer)
@@ -35,11 +34,8 @@ public class ArrowController : NetworkBehaviour
             GameObject vfx = Instantiate(explosionEffect,transform.position,Quaternion.identity);
             NetworkServer.Spawn(vfx);
 
-            if(pInfo.pc.items.Count <4)
-            {
-               // pInfo.pc.pickedNum = other.GetComponent<Item>().itemInfo.num;
-                pInfo.pc.RpcUpdateNum(pInfo, other.GetComponent<Item>().itemInfo.num);
-            }
+            pInfo.pc.RpcUpdateNum(pInfo, other.GetComponent<Item>().itemInfo.num);
+
             DestroySelf();
             DestroyOther(other);
         }

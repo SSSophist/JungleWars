@@ -26,7 +26,7 @@ public class HunterController : NetworkBehaviour
     public bool canControl = true;
     //仓库
     [SyncVar] public PInfo pInfo=new();
-    public SyncList<ItemInfo> items = new();//[SyncVar(hook = nameof(OnPlayerInfoChanged))] 
+    [Mirror.ReadOnly] public SyncList<ItemInfo> items = new();//[SyncVar(hook = nameof(OnPlayerInfoChanged))] 
     
     //[SyncVar(hook = nameof(OnItemChanged))] public int pickedNum;
     //玩家动画机
@@ -50,10 +50,15 @@ public class HunterController : NetworkBehaviour
     [ClientRpc]
     public void RpcUpdateNum(PInfo pInfo, int num)
     {
+        //判断是否小于4个
+        if (pInfo.pc.items.Count >= 4)
+            return;
+
+        //判断是否是该玩家射出的剑，保证
         if(this.pInfo.index == pInfo.index)
         {
             items.Add(new ItemInfo(num));
-            Debug.Log("物品更新" + pInfo.index);
+            Debug.Log("添加物品" + pInfo.index);
 
             //更新本地玩家的UI
             if (isLocalPlayer)
@@ -63,14 +68,7 @@ public class HunterController : NetworkBehaviour
             }
         }
     }
-    [ClientRpc]
-    public void RpcUpdateUI()
-    {
-        if(isLocalPlayer)
-        {
-            ItemManager.st.UpdateUI(items);
-        }
-    }
+
     //当客户端创建一个网络对象时，OnStartClient 在每个客户端上的该网络对象上被调用
     public override void OnStartClient()
     {
