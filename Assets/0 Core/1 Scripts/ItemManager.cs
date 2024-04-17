@@ -216,6 +216,7 @@ public class ItemManager : MonoBehaviour
         itemUIs.Clear();
         toBeCalculatedItemUIs.Clear();
         toBeCalculatedItemSymbols.Clear();
+        symbolBlockState = new List<bool> { false, false, false, false };
         pc.items.Clear();
         pc.canControl = true;
 
