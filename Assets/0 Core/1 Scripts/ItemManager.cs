@@ -32,9 +32,9 @@ public class ItemManager : MonoBehaviour
 
     [FoldoutGroup("State")][LabelText("结果")] public int res;
     [FoldoutGroup("State")][Header("当前物品UI")] public List<ItemUI> itemUIs = new();
-
     [FoldoutGroup("State")][Header("待计算数字")] public List<ItemUI> toBeCalculatedItemUIs = new();
     [FoldoutGroup("State")][Header("待计算符号")] public List<SymbolItem> toBeCalculatedItemSymbols = new();
+    [FoldoutGroup("State")][Header("待计算符号")] public List<bool> symbolBlockState = new();
     public int curItemCount=> toBeCalculatedItemUIs.Count;
     public int curSymbolCount => toBeCalculatedItemSymbols.Count;
     [FoldoutGroup("End")][Header("游戏胜利面板")] public GameObject winPanel;
@@ -51,6 +51,7 @@ public class ItemManager : MonoBehaviour
     void Start()
     {
         st = this;
+        symbolBlockState = new List<bool>{ false, false, false ,false};
     }
 
     //更新UI
@@ -71,8 +72,8 @@ public class ItemManager : MonoBehaviour
         
         // 动画效果
         Sequence seq = Sequence.Create()
-            .Chain(Tween.Scale(itemUIs[itemUIs.Count - 1].transform, Vector3.one*0.2f, resTS))
-            .Chain(Tween.Scale(itemUIs[itemUIs.Count - 1].transform, Vector3.one, 0.9f, Ease.OutSine));
+            .Chain(Tween.Scale(itemUIs[itemUIs.Count - 1].transform, Vector3.one * 1.2f, resTS))
+            .Chain(Tween.Scale(itemUIs[itemUIs.Count - 1].transform, Vector3.one, 0.2f, Ease.OutSine));
 
         // 如果数量大于4，则开始计算
         if (itemInfos.Count>=4)
@@ -111,7 +112,7 @@ public class ItemManager : MonoBehaviour
     {
         None
     }
-    public List<bool> symbolBlockState = new();
+
     //点击符号触发
     public void OnClickSymbolItem(SymbolItem itemUI)
     {
@@ -153,6 +154,7 @@ public class ItemManager : MonoBehaviour
         {
             if (symbolBlockState[i] == false)
             {
+                symbolBlockState[i] = true;
                 return i;
             }
         }
@@ -279,14 +281,13 @@ public class ItemManager : MonoBehaviour
         TimeManager.st.CmdStopTime();
         winPanel.SetActive(true);
     }
-    // 计算错误 失败
+    // 计算失败，继续寻找数字
     public void CompeteFail()
     {
-        // 计算失败，继续寻找数字
         completeFailPanel.SetActive(true);
         Tween.Delay(4f, () => completeFailPanel.SetActive(false));
-        //关闭面板 停止计算
-        StopCompete();
+        Tween.Scale(completeFailPanel.transform, loseTS).OnComplete(() => StopCompete());
+        
     }
     // 失败动画效果
     public TweenSettings<Vector3> loseTS;

@@ -17,15 +17,16 @@ public class GameManager : NetworkBehaviour
     [ClientRpc]
     void RpcDisplayVictoryPanel(uint targetNetID)
     {
-        if (isLocalPlayer && targetNetID == netId)
+        //isLocalPlayer && 
+        if (targetNetID == netId)
         {
-            Debug.Log(netId);
+            Debug.Log(netId + "”Æ");
             // œ‘ æ §¿˚√Ê∞Â
             ItemManager.st.Win();
         }
         else
         {
-            Debug.Log(netId);
+            Debug.Log(netId + " ‰");
             // œ‘ æ ß∞‹√Ê∞Â
             ItemManager.st.Lose();
         }
