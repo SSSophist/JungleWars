@@ -87,6 +87,16 @@ public class NetworkRoomPlayer : NetworkBehaviour
     {
         RoomManager.st.OnStartGame();
     }
+    [TargetRpc]
+    public void TargetRpcShowStartGameButton()
+    {
+        RoomManager.st.ShowStartGameButton();
+    }
+    [TargetRpc]
+    public void TargetRpcHideStartGameButton()
+    {
+        RoomManager.st.HideStartGameButton();
+    }
     #endregion
 
     #region SyncVar Hooks

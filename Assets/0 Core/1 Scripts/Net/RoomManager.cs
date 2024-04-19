@@ -36,7 +36,7 @@ public class RoomManager : MonoBehaviour
     public void OnReady()
     {
         isReady = !isReady;
-        roomPlayers[index].CmdChangeReadyState(isReady);
+        curNetRoomPlayer.CmdChangeReadyState(isReady);
         readyText.text = isReady ? "取消准备" : "准备";
     }
 
@@ -80,13 +80,18 @@ public class RoomManager : MonoBehaviour
         this.isReady = isReady;
         items[index].UpdateReadyInfo(isReady);
     }
-
     public void ShowStartGameButton()
     {
-        startGameButton.gameObject.SetActive(true);
+        if(curNetRoomPlayer.index == 0)
+            startGameButton.gameObject.SetActive(true);
+    }
+    public void HideStartGameButton()
+    {
+        startGameButton.gameObject.SetActive(false);
     }
     public void OnStartGameButton()
     {
+        Debug.Log(net.allPlayersReady);
         if (net.allPlayersReady)
         {
             // set to false to hide it in the game scene

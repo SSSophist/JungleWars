@@ -11,7 +11,7 @@ using Mirror;
 //物品管理器
 public class ItemManager : MonoBehaviour
 {
-    [FoldoutGroup("Set")] int targetRes = 24;
+    [FoldoutGroup("Set")] public int targetRes = 24;
 
     [FoldoutGroup("Set")][LabelText("状态")] public State state;
     [FoldoutGroup("Set")][LabelText("玩家控制器")] public HunterController pc;
@@ -48,9 +48,12 @@ public class ItemManager : MonoBehaviour
         Compute,    //计算中
         End         //游戏结束
     }
+    private void Awake()
+    {
+        st = this; 
+    }
     void Start()
     {
-        st = this;
         symbolBlockState = new List<bool>{ false, false, false ,false};
     }
 
@@ -142,6 +145,7 @@ public class ItemManager : MonoBehaviour
             itemUI.moveTween = Tween.UIAnchoredPosition(itemUI.RT, itemUI.originPos, moveTS);
             itemUI.state = SymbolState.None;*/   
             toBeCalculatedItemSymbols.Remove(itemUI);
+            symbolBlockState[itemUI.index] = false;
             Destroy(itemUI.gameObject);
         }
 
@@ -161,6 +165,7 @@ public class ItemManager : MonoBehaviour
         return -1;
     }
     // 检查是否完成
+    [Client]
     void CheckCanComplete()
     {
         // 计算结果
@@ -173,7 +178,8 @@ public class ItemManager : MonoBehaviour
             if (res == targetRes)
             {
                 state = State.End;
-                GameManager.st.PlayerWins();
+                GameManager.st.PlayerWins(pc.pInfo.index);
+                TimeManager.st.StopTime();
             }
             else
             {
@@ -278,8 +284,6 @@ public class ItemManager : MonoBehaviour
     // 计算成功 胜利
     public void Win()
     {
-        //胜利
-        TimeManager.st.CmdStopTime();
         winPanel.SetActive(true);
     }
     // 计算失败，继续寻找数字

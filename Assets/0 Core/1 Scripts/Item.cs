@@ -29,4 +29,12 @@ public class Item : NetworkBehaviour
     {
         Tween.Rotation(transform, ts);
     }
+    
+    private void OnDestroy()
+    {
+        if(isServer)
+        {
+            NetworkServer.Destroy(gameObject);
+        }
+    }
 }

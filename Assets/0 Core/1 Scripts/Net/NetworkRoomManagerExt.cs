@@ -74,7 +74,29 @@ public class NetworkRoomManagerExt : NetworkRoomManager
         {
             showStartButton = true;
             Debug.Log("展示开始按钮");
-            RoomManager.st.ShowStartGameButton();
+            if(roomSlots[0] !=null)
+            {
+                roomSlots[0].TargetRpcShowStartGameButton();
+            }
+        }
+    }
+
+    public override void OnRoomServerPlayersNotReady()
+    {
+
+        // calling the base method calls ServerChangeScene as soon as all players are in Ready state.
+        if (Utils.IsHeadless())
+        {
+            Debug.Log("calling the base method calls ServerChangeScene as soon as all players are in Ready state.");
+            base.OnRoomServerPlayersReady();
+        }
+        else
+        {
+            Debug.Log("禁用开始按钮");
+            if (roomSlots[0] != null)
+            {
+                roomSlots[0].TargetRpcHideStartGameButton();
+            }
         }
     }
 }

@@ -12,7 +12,7 @@ public class TimeManager : NetworkBehaviour
     float startTime;
     public bool canTime = true;
     public static TimeManager st;
-    public void Start()
+    public override void OnStartClient()
     {
         st = this;
         startTime = Time.time;
@@ -42,8 +42,12 @@ public class TimeManager : NetworkBehaviour
         loseTimeText.text = "用时：" + time.ToString("F2") + "秒";
     }
 
+    public void StopTime()
+    {
+        Debug.Log(isOwned.ToString() + isServer.ToString() + isClient.ToString() + isLocalPlayer.ToString());
+        CmdStopTime();
+    }
     //停止时间
-    [Command]
     public void CmdStopTime()
     {
         canTime = false;

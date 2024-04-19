@@ -25,7 +25,7 @@ public class HunterController : NetworkBehaviour
 {
     public bool canControl = true;
     //仓库
-    [SyncVar] public PInfo pInfo=new();
+    [SyncVar] public PInfo pInfo = new();//有用
     [Mirror.ReadOnly] public SyncList<ItemInfo> items = new();//[SyncVar(hook = nameof(OnPlayerInfoChanged))] 
     
     //[SyncVar(hook = nameof(OnItemChanged))] public int pickedNum;
@@ -53,20 +53,32 @@ public class HunterController : NetworkBehaviour
         //判断是否小于4个
         if (pInfo.pc.items.Count >= 4)
             return;
-
+        //items.Add(new ItemInfo(num)); 或者取消同步
         //判断是否是该玩家射出的剑，保证
-        if(this.pInfo.index == pInfo.index)
+        if (this.pInfo.index == pInfo.index)
         {
-            items.Add(new ItemInfo(num));
             Debug.Log("添加物品" + pInfo.index);
-
+            // 
             //更新本地玩家的UI
             if (isLocalPlayer)
             {
+                items.Add(new ItemInfo(num));
                 Debug.Log("更新本地玩家的UI");
                 ItemManager.st.UpdateUI(items);
             }
+            else
+            {
+                Debug.Log("另一个玩家的UI");
+            }
         }
+    }
+    // 这个方法在玩家生成时被调用
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+
+        pInfo.index = GetPlayerIndex();
+
     }
 
     //当客户端创建一个网络对象时，OnStartClient 在每个客户端上的该网络对象上被调用
@@ -77,6 +89,7 @@ public class HunterController : NetworkBehaviour
 
         if(isLocalPlayer)
         {
+            GameManager.st.playerIndex = pInfo.index;
             //设置
             ItemManager.st.pc = this;
             cameraTF = Camera.main.transform;
@@ -87,14 +100,7 @@ public class HunterController : NetworkBehaviour
             enabled = false;
         }
     }
-    // 这个方法在玩家生成时被调用
-    public override void OnStartServer()
-    {
-        base.OnStartServer();
-      
-        pInfo.index = GetPlayerIndex();
 
-    }
 
     // 获取玩家连接序号的方法
     private int GetPlayerIndex()

@@ -13,12 +13,13 @@ public class GameManager : NetworkBehaviour
         st = this;
     }
 
+    // 在所有客户端上同步执行的 RPC
     // 胜利信息的Rpc消息
     [ClientRpc]
-    void RpcDisplayVictoryPanel(uint targetNetID)
+    public void RpcDisplayVictoryPanel(int playerIndex)
     {
         //isLocalPlayer && 
-        if (targetNetID == netId)
+        if (playerIndex == this.playerIndex)
         {
             Debug.Log(netId + "赢");
             // 显示胜利面板
@@ -32,10 +33,21 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-    // 当胜利条件达成时调用此方法
-    public void PlayerWins()
+
+    public void PlayerWins(int playerIndex)
     {
+        Debug.Log(isOwned.ToString() + isServer.ToString() + isClient.ToString() + isLocalPlayer.ToString());
         // 在胜利发生时调用Rpc消息
-        RpcDisplayVictoryPanel(netId);
+        CmdPlayerWins(playerIndex);
+
+    }
+
+    // 当胜利条件达成时调用此方法
+    public void CmdPlayerWins(int playerIndex)
+    {
+       
+        // 在胜利发生时调用Rpc消息
+        RpcDisplayVictoryPanel(playerIndex);
+       
     }
 }
