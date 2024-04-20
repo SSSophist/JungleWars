@@ -178,8 +178,7 @@ public class ItemManager : MonoBehaviour
             if (res == targetRes)
             {
                 state = State.End;
-                GameManager.st.PlayerWins(pc.pInfo.index);
-                TimeManager.st.StopTime();
+                pc.Win();           
             }
             else
             {
@@ -285,6 +284,7 @@ public class ItemManager : MonoBehaviour
     public void Win()
     {
         winPanel.SetActive(true);
+        StopCompete();
     }
     // ¼ÆËãÊ§°Ü£¬¼ÌĞøÑ°ÕÒÊı×Ö
     public void CompeteFail()

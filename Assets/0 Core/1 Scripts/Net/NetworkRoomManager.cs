@@ -66,7 +66,7 @@ public class NetworkRoomManager : NetworkManager
     /// </summary>
     [ReadOnly, Tooltip("List of Room Player objects")]
     public List<NetworkRoomPlayer> roomSlots = new List<NetworkRoomPlayer>();
-
+   
     public bool allPlayersReady
     {
         get => _allPlayersReady;
@@ -82,9 +82,11 @@ public class NetworkRoomManager : NetworkManager
                 if (nowReady)
                 {
                     OnRoomServerPlayersReady();
+                    Debug.Log("所有玩家都准备好了");
                 }
                 else
                 {
+                    Debug.Log("有玩家未准备好");
                     OnRoomServerPlayersNotReady();
                 }
             }
@@ -114,10 +116,12 @@ public class NetworkRoomManager : NetworkManager
 
     void SceneLoadedForPlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
     {
-        //Debug.Log($"NetworkRoom SceneLoadedForPlayer scene: {SceneManager.GetActiveScene().path} {conn}");
+        Debug.Log($"NM SceneLoadedForPlayer scene: {SceneManager.GetActiveScene().path} {conn}");
 
+        // 如果房间场景仍然活动
         if (Utils.IsSceneActive(RoomScene))
         {
+            // 无法在房间中准备，将玩家添加到准备列表中
             // cant be ready in room, add to ready list
             PendingPlayer pending;
             pending.conn = conn;
@@ -125,21 +129,23 @@ public class NetworkRoomManager : NetworkManager
             pendingPlayers.Add(pending);
             return;
         }
-
+        // 在房间场景加载完成后的处理
+        // 如果需要自定义创建游戏玩家对象的逻辑，可以在派生类中重写该方法
         GameObject gamePlayer = OnRoomServerCreateGamePlayer(conn, roomPlayer);
+        // 如果创建的游戏玩家对象为空
         if (gamePlayer == null)
         {
-            // get start position from base class
+            // 获取开始位置，如果有的话
             Transform startPos = GetStartPosition();
-            gamePlayer = startPos != null
+            gamePlayer = startPos != null   // 根据开始位置是否存在来实例化游戏玩家对象
                 ? Instantiate(playerPrefab, startPos.position, startPos.rotation)
                 : Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
         }
-
+        // 如果房间场景加载完成后的处理返回false，则退出
         if (!OnRoomServerSceneLoadedForPlayer(conn, roomPlayer, gamePlayer))
             return;
 
-        // replace room player with game player
+        // 将房间玩家对象替换为游戏玩家对象
         NetworkServer.ReplacePlayerForConnection(conn, gamePlayer, true);
     }
 
@@ -173,7 +179,7 @@ public class NetworkRoomManager : NetworkManager
     {
         if (!Utils.IsSceneActive(RoomScene))
             return;
-
+        
         int numberOfReadyPlayers = NetworkServer.connections.Count(conn =>
             conn.Value != null &&
             conn.Value.identity != null &&
@@ -181,6 +187,8 @@ public class NetworkRoomManager : NetworkManager
             nrp.readyToBegin);
 
         bool enoughReadyPlayers = minPlayers <= 0 || numberOfReadyPlayers >= minPlayers;
+
+        Debug.Log(numberOfReadyPlayers.ToString() + enoughReadyPlayers);
         if (enoughReadyPlayers)
         {
             pendingPlayers.Clear();
@@ -199,6 +207,7 @@ public class NetworkRoomManager : NetworkManager
     /// <param name="conn">Connection from client.</param>
     public override void OnServerConnect(NetworkConnectionToClient conn)
     {
+        
         // cannot join game in progress
         if (!Utils.IsSceneActive(RoomScene))
         {
@@ -247,10 +256,21 @@ public class NetworkRoomManager : NetworkManager
         OnRoomServerDisconnect(conn);
         base.OnServerDisconnect(conn);
 
+        
         if (Utils.IsHeadless())
         {
             if (numPlayers < 1)
+            {
+                //重启服务器
+                Debug.Log("Restart Server");
                 StopServer();
+                SceneManager.LoadScene(0);
+                StartServer();
+                /*
+                StopServer();
+                StartServer();*/
+            }
+                
         }
     }
 
@@ -264,7 +284,7 @@ public class NetworkRoomManager : NetworkManager
     /// <param name="conn">Connection from client.</param>
     public override void OnServerReady(NetworkConnectionToClient conn)
     {
-        //Debug.Log($"NetworkRoomManager OnServerReady {conn}");
+        Debug.Log($"NetManager OnServerReady {conn}");
         base.OnServerReady(conn);
 
         if (conn != null && conn.identity != null)
@@ -304,6 +324,7 @@ public class NetworkRoomManager : NetworkManager
             // Late joiners not supported...should've been kicked by OnServerDisconnect
             Debug.Log($"Not in Room scene...disconnecting {conn}");
             conn.Disconnect();
+            ServerChangeScene(RoomScene);
         }
     }
 
@@ -350,7 +371,14 @@ public class NetworkRoomManager : NetworkManager
 
             allPlayersReady = false;
         }
+        foreach (NetworkRoomPlayer roomPlayer in roomSlots)
+        {
 
+        }
+        Debug.Log("ServerChangeScene: " + newSceneName);
+            //roomSlots[]
+        if(roomSlots.Count>0)
+            roomSlots[0].RpcOnStartGame();
         base.ServerChangeScene(newSceneName);
     }
 
@@ -577,14 +605,11 @@ public class NetworkRoomManager : NetworkManager
         return true;
     }
 
-    /// <summary>
-    /// This is called on server from NetworkRoomPlayer.CmdChangeReadyState when client indicates change in Ready status.
-    /// </summary>
     public virtual void ReadyStatusChanged()
     {
         int CurrentPlayers = 0;
         int ReadyPlayers = 0;
-
+        //计算准备玩家数量
         foreach (NetworkRoomPlayer item in roomSlots)
         {
             if (item != null)
@@ -594,6 +619,8 @@ public class NetworkRoomManager : NetworkManager
                     ReadyPlayers++;
             }
         }
+
+        Debug.Log(CurrentPlayers.ToString() + ReadyPlayers.ToString());
 
         if (CurrentPlayers == ReadyPlayers)
             CheckReadyToBegin();

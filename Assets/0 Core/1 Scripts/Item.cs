@@ -17,6 +17,14 @@ public class Item : NetworkBehaviour
         text3D.Text = itemInfo.num.ToString();
         text3D.UpdateText(itemInfo.num.ToString());
     }
+    public void Init(ItemInfo itemInfo)
+    {
+        this.itemInfo = itemInfo;
+
+        text3D.Text = itemInfo.num.ToString();
+        text3D.UpdateText(itemInfo.num.ToString());
+    }
+
     [ClientRpc]
     public void RpcInit(ItemInfo itemInfo)
     {

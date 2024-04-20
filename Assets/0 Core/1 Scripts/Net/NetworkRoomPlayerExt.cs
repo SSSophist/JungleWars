@@ -1,8 +1,7 @@
 using Mirror;
-using Org.BouncyCastle.Asn1.Mozilla;
-using Unity.VisualScripting;
+
 using UnityEngine;
-using UnityEngine.SceneManagement;
+
 
 [AddComponentMenu("")]
 public class NetworkRoomPlayerExt : NetworkRoomPlayer
@@ -11,7 +10,6 @@ public class NetworkRoomPlayerExt : NetworkRoomPlayer
     {
 
     }
-    /// <summary>Like Start(), but only called on client and host.</summary>
     public override void OnStartClient()
     {
         if(isLocalPlayer)
@@ -26,15 +24,15 @@ public class NetworkRoomPlayerExt : NetworkRoomPlayer
     {
         //更新房间信息
         RoomManager.st.UpdateRoomInfo();
-        Debug.Log($"OnClientEnterRoom {index}" + RoomManager.st.roomPlayers.Count);
+        Debug.Log($"OnClientEnterRoom 当客户端进入房间{index}" + RoomManager.st.roomPlayers.Count);
         //Debug.Log($"NetworkRoomPlayerExt OnClientEnterRoom {SceneManager.GetActiveScene().path}");
     }
 
     //当客户端离开房间
     public override void OnClientExitRoom()
     {
-        Debug.Log($"OnClientExitRoom {index}");
-        RoomManager.st.OnStartGame();
+        Debug.Log($"客户端离开房间 OnClientExitRoom {index}");
+        //RoomManager.st.OnStartGame();
         //Debug.Log($"OnClientExitRoom {SceneManager.GetActiveScene().path}");
     }
 

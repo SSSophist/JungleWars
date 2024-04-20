@@ -14,7 +14,7 @@ public class PInfo
 [Serializable]
 public struct ItemInfo
 {
-    [SyncVar] public int num;
+    public int num;
 
     public ItemInfo(int num)
     {
@@ -236,5 +236,28 @@ public class HunterController : NetworkBehaviour
     void RpcOnFire()
     {
         animator.Play("Shoot");
+    }
+
+    public void Win()
+    {
+        CmdStopTime();
+        if (isLocalPlayer)
+        {
+            ItemManager.st.Win();
+        }
+        else
+        {
+            CmdWin();
+        }
+    }
+    [Command]
+    public void CmdStopTime()
+    {
+        TimeManager.st.StopTime();
+    }
+    [Command]
+    public void CmdWin()
+    {
+        GameManager.st.RpcDisplayVictoryPanel(pInfo.index);
     }
 }

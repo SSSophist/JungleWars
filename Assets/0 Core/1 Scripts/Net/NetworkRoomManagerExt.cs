@@ -20,6 +20,12 @@ public class NetworkRoomManagerExt : NetworkRoomManager
     /// <param name="sceneName">Name of the new scene.</param>
     public override void OnRoomServerSceneChanged(string sceneName)
     {
+        Debug.Log("OnRoomServerSceneChanged");
+        if(sceneName == RoomScene)
+        {
+            StopServer();
+            StartServer();
+        }
         // spawn the initial batch of Rewards
         //if (sceneName == GameplayScene)
             //Spawner.InitialSpawn();
@@ -50,21 +56,17 @@ public class NetworkRoomManagerExt : NetworkRoomManager
     {
         base.OnRoomStopServer();
     }
-
-    /*
-        This code below is to demonstrate how to do a Start button that only appears for the Host player
-        showStartButton is a local bool that's needed because OnRoomServerPlayersReady is only fired when
-        all players are ready, but if a player cancels their ready state there's no callback to set it back to false
-        Therefore, allPlayersReady is used in combination with showStartButton to show/hide the Start button correctly.
-        Setting showStartButton false when the button is pressed hides it in the game scene since NetworkRoomManager
-        is set as DontDestroyOnLoad = true.
-    */
-
-    public bool showStartButton;
-
     public override void OnRoomServerPlayersReady()
     {
-        // calling the base method calls ServerChangeScene as soon as all players are in Ready state.
+
+        Debug.Log("所有玩家准备，房主展示开始按钮");
+        if (roomSlots[0] != null)
+        {
+            //告诉房主可以开始游戏
+            roomSlots[0].TargetRpcShowStartGameButton();
+        }
+        /*
+        //检测当前是否处于无界面（headless）或专用服务器模式下
         if (Utils.IsHeadless())
         {
             Debug.Log("calling the base method calls ServerChangeScene as soon as all players are in Ready state.");
@@ -72,18 +74,18 @@ public class NetworkRoomManagerExt : NetworkRoomManager
         }
         else
         {
-            showStartButton = true;
-            Debug.Log("展示开始按钮");
-            if(roomSlots[0] !=null)
-            {
-                roomSlots[0].TargetRpcShowStartGameButton();
-            }
-        }
+            
+        }*/
     }
 
     public override void OnRoomServerPlayersNotReady()
     {
-
+        Debug.Log("非所有玩家准备，禁用房主的开始按钮");
+        if (roomSlots.Count > 0)
+        {
+            roomSlots[0]?.TargetRpcHideStartGameButton();
+        }
+        /*
         // calling the base method calls ServerChangeScene as soon as all players are in Ready state.
         if (Utils.IsHeadless())
         {
@@ -92,11 +94,7 @@ public class NetworkRoomManagerExt : NetworkRoomManager
         }
         else
         {
-            Debug.Log("禁用开始按钮");
-            if (roomSlots[0] != null)
-            {
-                roomSlots[0].TargetRpcHideStartGameButton();
-            }
-        }
+           
+        }*/
     }
 }

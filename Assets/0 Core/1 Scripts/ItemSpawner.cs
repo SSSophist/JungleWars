@@ -57,10 +57,12 @@ public class ItemSpawner : NetworkBehaviour
 
 
         GameObject itemGO = Instantiate(itemPrefab, itemInfoNW.pos, Quaternion.identity);
+        itemGO.GetComponent<Item>().Init(itemInfoNW.itemInfo);
         NetworkServer.Spawn(itemGO);
+
         //必须在Spaw后执行
         // 初始化信息
-        itemGO.GetComponent<Item>().RpcInit(itemInfoNW.itemInfo);
+        //itemGO.GetComponent<Item>().RpcInit(itemInfoNW.itemInfo);
 
         hasSpawnItems.RemoveAll(item => item == null);
         hasSpawnItems.Add(itemGO);

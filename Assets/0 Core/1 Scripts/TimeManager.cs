@@ -41,23 +41,13 @@ public class TimeManager : NetworkBehaviour
         winTimeText.text = "用时：" + time.ToString("F2") + "秒";
         loseTimeText.text = "用时：" + time.ToString("F2") + "秒";
     }
-
+    //停止时间
     public void StopTime()
     {
         Debug.Log(isOwned.ToString() + isServer.ToString() + isClient.ToString() + isLocalPlayer.ToString());
-        CmdStopTime();
-    }
-    //停止时间
-    public void CmdStopTime()
-    {
-        canTime = false;
-        RpcStopTime();
-    }
-    [ClientRpc]
-    public void RpcStopTime()
-    {
         canTime = false;
     }
+
     //停止时间
     public void StartTime()
     {

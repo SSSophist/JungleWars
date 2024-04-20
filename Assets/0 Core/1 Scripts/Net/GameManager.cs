@@ -18,7 +18,7 @@ public class GameManager : NetworkBehaviour
     [ClientRpc]
     public void RpcDisplayVictoryPanel(int playerIndex)
     {
-        //isLocalPlayer && 
+        Debug.Log(playerIndex);
         if (playerIndex == this.playerIndex)
         {
             Debug.Log(netId + "赢");
@@ -36,18 +36,15 @@ public class GameManager : NetworkBehaviour
 
     public void PlayerWins(int playerIndex)
     {
+        //FalseFalseTrueFalse
         Debug.Log(isOwned.ToString() + isServer.ToString() + isClient.ToString() + isLocalPlayer.ToString());
-        // 在胜利发生时调用Rpc消息
-        CmdPlayerWins(playerIndex);
 
     }
 
-    // 当胜利条件达成时调用此方法
+    [Command]
     public void CmdPlayerWins(int playerIndex)
     {
-       
         // 在胜利发生时调用Rpc消息
         RpcDisplayVictoryPanel(playerIndex);
-       
     }
 }

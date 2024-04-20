@@ -70,21 +70,26 @@ public class NetworkRoomPlayer : NetworkBehaviour
 
     #region Commands
 
-    [Command]
+    [Command]//发送准备消息
     public void CmdChangeReadyState(bool readyState)
     {
         readyToBegin = readyState;
         NetworkRoomManager room = NetworkManager.singleton as NetworkRoomManager;
         room?.ReadyStatusChanged();
     }
-    [Command]
+    [Command]//发送请求开始游戏的消息 服务器执行
     public void CmdOnStartGame()
     {
-        RpcOnStartGame();
+        NetworkRoomManager room = NetworkManager.singleton as NetworkRoomManager;
+        room.ServerChangeScene(room.GameplayScene);
+        Debug.Log("CmdOnStartGame");
     }
-    [Server]
+
+    //所有都要执行
+    [ClientRpc]
     public void RpcOnStartGame()
     {
+        Debug.Log("RpcOnStartGame");
         RoomManager.st.OnStartGame();
     }
     [TargetRpc]

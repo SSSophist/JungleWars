@@ -19,7 +19,9 @@ public class RoomManager : MonoBehaviour
     public string GameplayScene = "1 Main";
     public Button startGameButton;
     public Button readyButton;
-    public TMP_Text readyText;
+    [FoldoutGroup("Set")] public GameObject esePanel;
+    [FoldoutGroup("Set")] public TMP_Text readyText;
+    [FoldoutGroup("Set")] public GameObject loginPanel;
     [FoldoutGroup("Set")][LabelText("提示文字")] public TMP_Text tipText;
    public static RoomManager st;
 
@@ -31,20 +33,28 @@ public class RoomManager : MonoBehaviour
         st = this;
     }
 
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            esePanel.SetActive(!esePanel.activeInHierarchy);
+        }
+    }
 
-
+    // 点击准备
     public void OnReady()
     {
         isReady = !isReady;
         curNetRoomPlayer.CmdChangeReadyState(isReady);
         readyText.text = isReady ? "取消准备" : "准备";
     }
-
+    // 点击创建房间
     public void OnCreateRoom()
     {
         NetworkManager.singleton.StartHost();
         //显示房间内玩家列表
     }
+    // 点击加入房间
     public void OnJoinRoom()
     {
         NetworkManager.singleton.StartClient();
@@ -82,8 +92,8 @@ public class RoomManager : MonoBehaviour
     }
     public void ShowStartGameButton()
     {
-        if(curNetRoomPlayer.index == 0)
-            startGameButton.gameObject.SetActive(true);
+        startGameButton.gameObject.SetActive(true);
+        //if(curNetRoomPlayer.index == 0)
     }
     public void HideStartGameButton()
     {
@@ -91,19 +101,14 @@ public class RoomManager : MonoBehaviour
     }
     public void OnStartGameButton()
     {
-        Debug.Log(net.allPlayersReady);
-        if (net.allPlayersReady)
-        {
-            // set to false to hide it in the game scene
-            curNetRoomPlayer.CmdOnStartGame();
-            startGameButton.gameObject.SetActive(false);
-            net.ServerChangeScene(GameplayScene);
-        }
+        curNetRoomPlayer.CmdOnStartGame();
+        startGameButton.gameObject.SetActive(false);
     }
-    // 当开始游戏时
+    // 当开始游戏时执行的东西
     public void OnStartGame()
     {
         roomPanel.SetActive(false);
+        loginPanel.SetActive(false);
     }
 
     void ShowTip()
@@ -125,7 +130,15 @@ public class RoomManager : MonoBehaviour
             tipText.text = $"<b>Client</b>: connected to {net.networkAddress} via {Transport.active}";
         }
     }
+    public void Show(string content)
+    {
+        tipText.text = content;
+    }
 
+    public void ClickExitButton()
+    {
+        Application.Quit();
+    }
 }
 public struct RoomData
 {
