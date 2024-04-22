@@ -209,10 +209,12 @@ public class HunterController : NetworkBehaviour
                 targetPosition.y = shootingPoint.position.y; // 保持在xz平面上
                 Vector3 shootDirection = (targetPosition - shootingPoint.position).normalized;
                 CmdShoot(shootDirection);
+                GameManager.st.PlayOneClip(shootAC);
                 model.forward = shootDirection;
             }
         }
     }
+    public AudioClip shootAC;
     [Command]
     public void CmdShoot(Vector3 shootDirection)//Vector3 dir
     {

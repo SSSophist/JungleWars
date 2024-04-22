@@ -7,6 +7,7 @@ public class GameManager : NetworkBehaviour
 {
     public static GameManager st;
     public int playerIndex;
+    public AudioSource au;
 
     private void Awake()
     {
@@ -46,5 +47,10 @@ public class GameManager : NetworkBehaviour
     {
         // 在胜利发生时调用Rpc消息
         RpcDisplayVictoryPanel(playerIndex);
+    }
+
+    public void PlayOneClip(AudioClip ac)
+    {
+        au.PlayOneShot(ac);
     }
 }

@@ -12,9 +12,10 @@ public class TimeManager : NetworkBehaviour
     float startTime;
     public bool canTime = true;
     public static TimeManager st;
-    public override void OnStartClient()
+    public override void OnStartServer()
     {
         st = this;
+        Debug.Log("Reset Time");
         startTime = Time.time;
     }
 
